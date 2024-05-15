@@ -122,6 +122,16 @@ for(int symbol_index=0;symbol_index<=49;symbol_index++){
 return 0;
 }//receive_binary_to_receive_symbol
 
+//OK
+int ack_response(){
+if(/*review TX ACTIVE*/){
+int response_array[]={A,C,K};
+for(int index=0;index<=2;index++){//for
+  byte_transmit(response_array[index]);
+}//for
+}//if
+return 0;
+}//ack_repsonse
 
 //OK
 int nack_response(){
