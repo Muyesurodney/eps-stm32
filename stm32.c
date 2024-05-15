@@ -9,8 +9,8 @@
 //0x05=4 ,PD   ,Put parameter data to device   ,Master,All   , {PD EPS SPC ddddddd IPC ddddddd}->{EPS ACK PD SPC IPC}or{NACK}
 //0x06=6 ,RD   ,Read data                      ,Master,All   , {RD EPS}->{EPS ACK AFDEVSAT KENYA-SPACE-AGENCY}or{NACK}
 //0x07=7 ,WD   ,Write data                     ,Master,All   , {WD EPS ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss}->{EPS ACK WD}}or{NACK}
-//0x0b=11,SON  ,Switch ON subsystem            ,Master,EPS   , {SON PYLD}or{SON ADCS}or{SON GCS}->{ACK}or{NACK}
-//0x0c=12,SOF  ,Switch OFF subsystem           ,Master,EPS   , {SOF PYLD}or{SOF ADCS}or{SOF GCS}->{ACK}or{NACK}
+//0x0b=11,SON  ,Switch ON subsystem            ,Master,EPS   , {SON PYLD}or{SON ADCS}or{SON GCS}
+//0x0c=12,SOF  ,Switch OFF subsystem           ,Master,EPS   , {SOF PYLD}or{SOF ADCS}or{SOF GCS}
 //0x15=21,SM   ,Set subsystem Mode of operation,Master,ALL   , {SM xxx x}->{EPS ACK SM xxx y MASTER} xxx=subsyt, y=mode
 //0x16=22,GM   ,Get subsystem Mode of operation,Master,ALL   , {GM PYLD x}->{EPS ACK GM PYLD x MASTER},{GM ADCS x},{GM GCS x}
 //0x17=23,GSC  ,Get Synch Counter value        ,Master,ALL   , {GSC}->{EPS ACK GSC EPS MASTER}->{}->{END}
@@ -124,17 +124,6 @@ return 0;
 
 
 //OK
-int ack_response(){
-if(/*review TX ACTIVE*/){
-int response_array[]={A,C,K};
-for(int index=0;index<=2;index++){//for
-  byte_transmit(response_array[index]);
-}//for
-}//if
-return 0;
-}//ack_repsonse
-
-//OK
 int nack_response(){
 if(/*review TX ACTIVE*/){//if
  int response_array[]={N,A,C,K};
@@ -149,7 +138,7 @@ return 0;
 //OK
 int ping_check(){//ping response
 if(
-(receive_symbol[0]==P    )&&(receive_symbol[1]==I)&&(receive_symbol[2]==N)&&(receive_symbol[3]==G)&&
+(receive_symbol[0]==P)&&(receive_symbol[1]==I)&&(receive_symbol[2]==N)&&(receive_symbol[3]==G)&&
 (receive_symbol[4]==space)&&(receive_symbol[5]==E)&&(receive_symbol[6]==P)&&(receive_symbol[7]==S)&&
 /*review TX ACTIVE*/
 ){//ping detected
@@ -258,62 +247,59 @@ else{nack_response();}
 return 0;
 }//wd_check
 
-//OK
-//{SON PYLD}or{SON ADCS}or{SON GCS}->{ACK}or{NACK}
+
+//{SON PYLD}or{SON ADCS}or{SON GCS}or{NACK}
 int son_check(){
 if(
 (receive_symbol[0 ]==S)&&(receive_symbol[1 ]==O)&&(receive_symbol[2 ]==N)&&(receive_symbol[3 ]==space)
 ){//son detected
   if((receive_symbol[4 ]==P)&&(receive_symbol[5 ]==Y)&&(receive_symbol[6 ]==L)&&(receive_symbol[6 ]==D)){
   /*review payload ON*/
-  ack_response();
   }//if son pyld
   if((receive_symbol[4 ]==A)&&(receive_symbol[5 ]==D)&&(receive_symbol[6 ]==C)&&(receive_symbol[6 ]==S)){
   /*review adcs ON*/
-  ack_response();
   }//if son adcs
   if((receive_symbol[4 ]==G)&&(receive_symbol[5 ]==C)&&(receive_symbol[6 ]==S)){
   /*review gcs ON*/
-  ack_response();
   }//if son gcs
 }//son_detected
 else{nack_response();}
 return 0;
 }//son_check
 
-//OK
-//{SOF PYLD}or{SOF ADCS}or{SOF GCS}->{ACK}or{NACK}
+//{SOF PYLD}or{SOF ADCS}or{SOF GCS}
+//0k
 int sof_check(){
-if(
-(receive_symbol[0 ]==S)&&(receive_symbol[1 ]==O)&&(receive_symbol[2 ]==F)&&(receive_symbol[3 ]==space)
-){//son detected
+  if((receive_symbol[0 ]==S)&&(receive_symbol[1 ]==O)&&(receive_symbol[2 ]==F)&&(receive_symbol[3 ]==space)
+){//sof detected
   if((receive_symbol[4 ]==P)&&(receive_symbol[5 ]==Y)&&(receive_symbol[6 ]==L)&&(receive_symbol[6 ]==D)){
-  /*review payload OFF*/
-  ack_response();
-  }//if son pyld
+  /*review payload Off*/
+  
+  }//if sof pyld
   if((receive_symbol[4 ]==A)&&(receive_symbol[5 ]==D)&&(receive_symbol[6 ]==C)&&(receive_symbol[6 ]==S)){
-  /*review adcs OFF*/
-  ack_response();
-  }//if son adcs
+  /*review adcs Off*/
+  }//if sof adcs
   if((receive_symbol[4 ]==G)&&(receive_symbol[5 ]==C)&&(receive_symbol[6 ]==S)){
-  /*review gcs OFF*/
-  ack_response();
-  }//if son gcs
-}//son_detected
+  /*review gcs Off*/
+  }//if sof gcs
+}//sof_detected
 else{nack_response();}
 return 0;
 }//sof_check
 
-//
+//{SM xxx x}->{EPS ACK SM xxx y MASTER} xxx=subsyt, y=mode
 int sm_check(){
 return 0;
 }//sm_check
 
+//{GM PYLD x}->{EPS ACK GM PYLD x MASTER},{GM ADCS x},{GM GCS x}
 int gm_check(){
 return 0;
 }//gm_check
 
+{GSC}->{EPS ACK GSC EPS MASTER}->{}->{END}
 int gsc_check(){
+  if((receive_symbol[0]==E)&&(receive_symbol[1]==P)&&(receive_symbol[2]==S)&&(
 return 0;
 }//gsc_check
 
