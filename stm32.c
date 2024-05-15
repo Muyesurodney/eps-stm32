@@ -146,6 +146,7 @@ return 0;
 
 
 //OK
+//{PING EPS}->{ACK AFDEVSAT EPS LIVE}or{NACK}
 int ping_check(){//ping response
 if(
 (receive_symbol[0]==P)&&(receive_symbol[1]==I)&&(receive_symbol[2]==N)&&(receive_symbol[3]==G)&&
@@ -163,6 +164,7 @@ return 0;
 
 
 //OK
+//{GD EPS}->{EPS ACK SPC ddddddd IPC ddddddd}or{NACK}
 int gd_check(){
 if(
 (receive_symbol[0]==G)&&(receive_symbol[1]==D)&&(receive_symbol[2]==space)&&
@@ -278,24 +280,28 @@ return 0;
 }//son_check
 
 //{SOF PYLD}or{SOF ADCS}or{SOF GCS}
-//0k
+//0K
 int sof_check(){
-  if((receive_symbol[0 ]==S)&&(receive_symbol[1 ]==O)&&(receive_symbol[2 ]==F)&&(receive_symbol[3 ]==space)
+if(
+(receive_symbol[0 ]==S)&&(receive_symbol[1 ]==O)&&(receive_symbol[2 ]==F)&&(receive_symbol[3 ]==space)
 ){//sof detected
-  if((receive_symbol[4 ]==P)&&(receive_symbol[5 ]==Y)&&(receive_symbol[6 ]==L)&&(receive_symbol[6 ]==D)){
-  /*review payload Off*/
-  
+  if((receive_symbol[4 ]==P)&&(receive_symbol[5 ]==Y)&&(receive_symbol[6 ]==L)&&(receive_symbol[7 ]==D)){
+  /*review payload OFF*/
+  ack_response();
   }//if sof pyld
-  if((receive_symbol[4 ]==A)&&(receive_symbol[5 ]==D)&&(receive_symbol[6 ]==C)&&(receive_symbol[6 ]==S)){
-  /*review adcs Off*/
+  if((receive_symbol[4 ]==A)&&(receive_symbol[5 ]==D)&&(receive_symbol[6 ]==C)&&(receive_symbol[7 ]==S)){
+  /*review adcs OFF*/
+  ack_response();
   }//if sof adcs
   if((receive_symbol[4 ]==G)&&(receive_symbol[5 ]==C)&&(receive_symbol[6 ]==S)){
-  /*review gcs Off*/
+  /*review gcs OFF*/
+  ack_response();
   }//if sof gcs
 }//sof_detected
 else{nack_response();}
 return 0;
 }//sof_check
+
 
 //{SM xxx x}->{EPS ACK SM xxx y MASTER} xxx=subsyt, y=mode
 int sm_check(){
@@ -309,18 +315,24 @@ return 0;
 
 {GSC}->{EPS ACK GSC EPS MASTER}->{}->{END}
 int gsc_check(){
-  if((receive_symbol[0]==E)&&(receive_symbol[1]==P)&&(receive_symbol[2]==S)&&(
+  if((receive_symbol[0]==G)&&(receive_symbol[1]==S)&&(receive_symbol[2]==C))
+  {//gsc detected
+    if((receive_symbol[3]==E)&&(receive_symbol[4]==P)&&(receive_symbol[5]==S))}
+  
 return 0;
 }//gsc_check
 
+//{SSC pppp}->{EPS ACK SSC pppp MASTER END} or {EPS NACK SSC pppp}
 int ssc_check(){
 return 0;
 }//ssc_check
 
+//{GFP EPS xxxxx}->{EPS ACK GFP MASTER yyy} or {NACK}
 int gfp_check(){
 return 0;
 }//gfp_check
 
+//{SFP EPS xxxxx yyy}->{ACK SFP xxxxx yyy} or {NACK}
 int sfp_check(){
 return 0;
 }//sfp_check
