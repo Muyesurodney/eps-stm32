@@ -317,7 +317,9 @@ return 0;
 int gsc_check(){
   if((receive_symbol[0]==G)&&(receive_symbol[1]==S)&&(receive_symbol[2]==C))
   {//gsc detected
-    if((receive_symbol[3]==E)&&(receive_symbol[4]==P)&&(receive_symbol[5]==S))}
+  //review TX active
+  ack_response();
+  
   
 return 0;
 }//gsc_check
@@ -337,18 +339,22 @@ int sfp_check(){
 return 0;
 }//sfp_check
 
+//{FON}  ->{ACK FON x}
 int fon_check(){
 return 0;
 }//fon_check
 
+//{FOF}  ->{ACK FOF x}
 int fof_check(){
 return 0;
 }//fof_check
 
+//{GOSTM}->{ACK GOSTM PV1 yyyy PV2 yyyy BATV yyyy MODE y MASTER}
 int gostm_check(){
 return 0;
 }//
 
+//{KEN}  ->{ACK KEN} or{NACK}
 int ken_check(){
 if(
 (receive_symbol[0]==K)&&(receive_symbol[1]==E)&&(receive_symbol[2]==N)&&(receive_symbol[3]==S)&&/*review TX ACTIVE*/
